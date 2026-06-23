@@ -14,6 +14,7 @@ static d_open_t     d_open;
 static d_close_t    d_close;
 static d_read_t     d_read;
 static d_write_t    d_write;
+static d_ioctl_t    d_ioctl;
 
 static struct cdevsw cccdev_cdevsw = {
     .d_version  = D_VERSION,
@@ -21,6 +22,7 @@ static struct cdevsw cccdev_cdevsw = {
     .d_close    = d_close,
     .d_read     = d_read,
     .d_write    = d_write,
+    .d_ioctl    = d_ioctl,
     .d_name     = "caesar",
 };
 
@@ -41,6 +43,23 @@ static int d_read(struct cdev *dev, struct uio *uio, int ioflag) {
 
 static int d_write(struct cdev *dev, struct uio *uio, int ioflag) {
     return (0);
+}
+
+static int d_ioctl(struct cdev *dev, u_long cmd, caddr_t data, int fflag, struct thread *td) {
+    int error;
+
+    switch (cmd) {
+    /*
+     * case *NAME*:
+     *   // read data
+     *   int kernel_integer = *(int *)data;
+     *
+     *   // set data
+     *   *(int *)data = 10;
+     *
+     *   break;
+     */
+    }
 }
 
 

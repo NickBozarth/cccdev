@@ -50,3 +50,10 @@ enum crypt_algorithm {
     /* TEST FUNCTION! DO NOT USE IN PROD */
     ALG_DJB2_TEST
 };
+
+
+struct settings {
+    enum crypt_function function;
+    enum crypt_algorithm algorithm;
+    union algorithm_settings settings;
+};
