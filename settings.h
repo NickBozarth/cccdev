@@ -1,4 +1,4 @@
-
+#include "alg_settings.h"
 
 
 enum crypt_function {
@@ -21,10 +21,10 @@ enum crypt_algorithm {
      */
     ALG_AES_GCM,
     ALG_TWOFISH,
-    /* TOY FUNCTION! DO NOT USE IN PROD */
-    ALG_CAESAR,
-    /* TOY FUNCTION! DO NOT USE IN PROD */
-    ALG_VIGENERE,
+    /* TEST FUNCTION! DO NOT USE IN PROD */
+    ALG_CAESAR_TEST,
+    /* TEST FUNCTION! DO NOT USE IN PROD */
+    ALG_VIGENERE_TEST,
 
 
     /*
@@ -35,8 +35,8 @@ enum crypt_algorithm {
      */
     ALG_RSA,
     ALG_ECC,
-    /* TOY FUNCTION! DO NOT USE IN PROD */
-    ALG_TOY_RSA,
+    /* TEST FUNCTION! DO NOT USE IN PROD */
+    ALG_TOY_RSA_TEST,
 
 
     /*
@@ -47,6 +47,6 @@ enum crypt_algorithm {
      */
     ALG_SHA2,
     ALG_MD5,
-    /* TOY FUNCTION! DO NOT USE IN PROD */
-    ALG_DJB2
+    /* TEST FUNCTION! DO NOT USE IN PROD */
+    ALG_DJB2_TEST
 };
