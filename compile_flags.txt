@@ -1,0 +1,11 @@
+// For nvim lsp, does not work perfect with my setup
+
+--target=aarch64-unknown-freebsd
+-D__aarch64__
+-nostdinc
+-D_KERNEL
+-DKLD_MODULE
+-I.
+-I/home/zac/Documents/Code/RPi/src/sys
+-I/home/zac/Documents/Code/RPi/src/sys/contrib/ck/include
+-fsyntax-only

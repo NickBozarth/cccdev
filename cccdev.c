@@ -4,7 +4,12 @@
 #include <sys/systm.h>
 #include <sys/conf.h>
 #include <sys/uio.h>
-// #include <sys/malloc.h>
+#include <sys/malloc.h>
+
+#include "session.h"
+
+MALLOC_DECLARE(M_CCCDEV);
+MALLOC_DEFINE(M_CCCDEV, "malloc_cccdev", "malloc c crypto character device");
 
 
 
@@ -72,10 +77,27 @@ static int d_modevent(module_t mod, int type, void *arg) {
     switch (type) {
     case MOD_LOAD:
         sdev = make_dev(&cccdev_cdevsw, 0, UID_ROOT, GID_WHEEL, 0666, "cccdev");
+
+
+        /* Define some global session runtime vars */
+        mtx_init(&global_session_mutex, "global_session_mutex", NULL, MTX_DEF);
+        LIST_INIT(&session_list);
+
+
         uprintf("cccdev driver loaded into kernel\n");
         break;
     case MOD_UNLOAD:
         destroy_dev(sdev);
+
+
+        /* Free memory from session_list */
+        struct session *cursor, *temp;
+        mtx_lock(&global_session_mutex);
+        LIST_FOREACH_SAFE(cursor, &session_list, entries, temp) {
+            LIST_REMOVE(cursor, entries);
+            free(cursor, M_CCCDEV);
+        }
+
         uprintf("cccdev driver unloaded successfully\n");
         break;
     default:
