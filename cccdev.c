@@ -34,7 +34,7 @@ static struct cdevsw cccdev_cdevsw = {
 
 
 static int d_open(struct cdev *dev, int oflags, int devtype, struct thread *td) {
-    struct session *session = create_new_session();
+    // struct session *session = create_new_session();
     return (0);
 }
 
@@ -65,7 +65,7 @@ static int d_write(struct cdev *dev, struct uio *uio, int ioflag) {
 }
 
 static int d_ioctl(struct cdev *dev, u_long cmd, caddr_t data, int fflag, struct thread *td) {
-    int error;
+    // int error;
 
     switch (cmd) {
     /*
@@ -79,6 +79,8 @@ static int d_ioctl(struct cdev *dev, u_long cmd, caddr_t data, int fflag, struct
      *   break;
      */
     }
+
+    return (0);
 }
 
 

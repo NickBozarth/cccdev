@@ -5,6 +5,7 @@
 -nostdinc
 -D_KERNEL
 -DKLD_MODULE
+-D_LSP
 -I.
 -I/home/zac/Documents/Code/RPi/src/sys
 -I/home/zac/Documents/Code/RPi/src/sys/contrib/ck/include
