@@ -4,10 +4,33 @@
 #include <sys/param.h>
 #include <sys/lock.h>
 #include <sys/mutex.h>
-
+/* DEVFS_XXX_CDEVPRIV */
+// #include <sys/param.h>
+#include <sys/conf.h>
+/* UIO */
+#include <sys/types.h>
+#include <sys/uio.h>
+/* INT TYPE DEFS */
 #include <sys/systm.h>
 
 #include "settings.h"
+
+
+
+/*
+ * TODO REMOVE ME BEFORE PROD
+ * Its a catch-all that helps my lsp
+ */
+#ifndef M_CCCDEV
+
+#include <sys/kernel.h>
+#include <sys/malloc.h>
+MALLOC_DECLARE(M_CCCDEV);
+MALLOC_DEFINE(M_CCCDEV, "malloc_cccdev", "malloc c crypto character device");
+
+#endif /* M_CCCDEV */
+
+
 
 
 #define MAX_BLOCK_SIZE 512
@@ -18,7 +41,6 @@ struct data_block {
     char data[MAX_BLOCK_SIZE];
     size_t block_size;
     int is_processed;
-    struct mtx block_mutex;
 
     LIST_ENTRY(data_block) entries;
 };
@@ -39,14 +61,17 @@ struct session {
     uint64_t session_id;
     struct data_block_head data_blocks;
     struct settings settings;
-    struct mtx session_mutex;
 
-    LIST_ENTRY(session) entries;
+    struct mtx block_mtx;
 };
-LIST_HEAD(session_list_head, session);
-static struct session_list_head session_list;
-static struct mtx global_session_mutex;
 
 
 
 
+
+void session_dtor(void *);
+struct session *create_new_session();
+struct session *get_session();
+
+int uio_to_session(struct uio *, struct session *);
+int session_to_uio(struct session *, struct uio *);

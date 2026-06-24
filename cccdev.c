@@ -6,11 +6,10 @@
 #include <sys/uio.h>
 #include <sys/malloc.h>
 
-#include "session.h"
-
 MALLOC_DECLARE(M_CCCDEV);
 MALLOC_DEFINE(M_CCCDEV, "malloc_cccdev", "malloc c crypto character device");
 
+#include "session.h"
 
 
 static struct cdev *sdev;
@@ -35,6 +34,7 @@ static struct cdevsw cccdev_cdevsw = {
 
 
 static int d_open(struct cdev *dev, int oflags, int devtype, struct thread *td) {
+    struct session *session = create_new_session();
     return (0);
 }
 
@@ -43,11 +43,25 @@ static int d_close(struct cdev *dev, int fflag, int devtype, struct thread *td) 
 }
 
 static int d_read(struct cdev *dev, struct uio *uio, int ioflag) {
-    return (0);
+    struct session *session;
+    int error;
+
+    session = get_session();
+    if (session == NULL) return (0);
+    error = session_to_uio(session, uio);
+
+    return (error);
 }
 
 static int d_write(struct cdev *dev, struct uio *uio, int ioflag) {
-    return (0);
+    struct session *session;
+    int error;
+
+    session = get_session();
+    if (session == NULL) return (0);
+    error = uio_to_session(uio, session);
+
+    return (error);
 }
 
 static int d_ioctl(struct cdev *dev, u_long cmd, caddr_t data, int fflag, struct thread *td) {
@@ -76,28 +90,19 @@ static int d_modevent(module_t mod, int type, void *arg) {
 
     switch (type) {
     case MOD_LOAD:
-        sdev = make_dev(&cccdev_cdevsw, 0, UID_ROOT, GID_WHEEL, 0666, "cccdev");
-
-
-        /* Define some global session runtime vars */
-        mtx_init(&global_session_mutex, "global_session_mutex", NULL, MTX_DEF);
-        LIST_INIT(&session_list);
-
+        sdev = make_dev(
+            &cccdev_cdevsw,
+            0,
+            UID_ROOT,
+            GID_WHEEL,
+            0666,
+            "cccdev"
+        );
 
         uprintf("cccdev driver loaded into kernel\n");
         break;
     case MOD_UNLOAD:
         destroy_dev(sdev);
-
-
-        /* Free memory from session_list */
-        struct session *cursor, *temp;
-        mtx_lock(&global_session_mutex);
-        LIST_FOREACH_SAFE(cursor, &session_list, entries, temp) {
-            LIST_REMOVE(cursor, entries);
-            free(cursor, M_CCCDEV);
-        }
-
         uprintf("cccdev driver unloaded successfully\n");
         break;
     default:

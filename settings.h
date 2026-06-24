@@ -2,7 +2,7 @@
 
 
 enum crypt_function {
-    FUN_UNDEFINED,
+    FUN_UNDEFINED = 0,
     FUN_ENCRYPT,
     FUN_DECRYPT,
     FUN_HASH,
@@ -10,7 +10,7 @@ enum crypt_function {
 
 
 enum crypt_algorithm {
-    ALG_UNDEFINED,
+    ALG_UNDEFINED = 0,
 
 
     /* 
