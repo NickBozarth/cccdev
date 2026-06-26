@@ -2,6 +2,6 @@
 SYSDIR=/mnt/usb1/sys
 
 KMOD= cccdev
-SRCS= cccdev.c session.c
+SRCS= cccdev.c
 
 .include <bsd.kmod.mk>

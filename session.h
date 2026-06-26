@@ -13,6 +13,9 @@
 /* INT TYPE DEFS */
 #include <sys/systm.h>
 
+#include <sys/atomic.h>
+
+
 #include "settings.h"
 
 
@@ -120,7 +123,7 @@ static int uio_to_session(struct uio *uio, struct session *session) {
     mtx_lock(&session->block_mtx);
     while (uio->uio_resid != 0) {
         struct data_block *block = malloc(sizeof(*block), M_CCCDEV, M_WAITOK | M_ZERO);
-        if (LIST_EMPTY(&session->data_blocks))
+        if (prev_block == NULL)
             LIST_INSERT_HEAD(&session->data_blocks, block, entries);
         else
             LIST_INSERT_AFTER(prev_block, block, entries);
@@ -128,14 +131,15 @@ static int uio_to_session(struct uio *uio, struct session *session) {
         block->block_size = MIN(uio->uio_resid, MAX_BLOCK_SIZE);
         error = uiomove(block->data, block->block_size, uio);
         if (error != 0) {
+            uprintf("There was an error uiomove\n");
             session_dtr(session);
             return (error);
         }
 
+        uprintf("Moved data [%.*s]\n", (int)block->block_size, block->data);
+
         prev_block = block;
     }
-
-
     mtx_unlock(&session->block_mtx);
 
     return (0);
@@ -145,6 +149,14 @@ static int session_to_uio(struct session *session, struct uio *uio) {
 
     mtx_lock(&session->block_mtx);
     struct data_block *block = LIST_FIRST(&session->data_blocks);
+
+    struct data_block *cursor;
+    int count = 0;
+    LIST_FOREACH(cursor, &session->data_blocks, entries) {
+        count++;
+    }
+
+    uprintf("DATA BLOCK SIZE: [%i]\n", count);
 
     if (block == NULL)
         return (0);

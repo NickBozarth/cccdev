@@ -1,15 +1,12 @@
 // For nvim lsp, does not work perfect with my setup
 
 --target=aarch64-unknown-freebsd
--std=gnu17
--ffreestanding
--mgeneral-regs-only
--ffixed-x18
+-D__aarch64__
+-nostdinc
 -D_KERNEL
 -DKLD_MODULE
 -D_LSP
--nostdinc
 -I.
 -I/home/zac/Documents/Code/RPi/src/sys
 -I/home/zac/Documents/Code/RPi/src/sys/contrib/ck/include
--include /mnt/usb1/projects/cccdev/opt_global.h
+-fsyntax-only

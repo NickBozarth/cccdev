@@ -1,5 +1,8 @@
 #include <stddef.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
 
 #include "settings.h"
 
@@ -15,25 +18,27 @@ int main() {
     int fd = open("/dev/cccdev", O_RDWR);
     // if (fd == 0) { error }
 
-    error = ioctl(fd, CONFIG_CRYPT_FUNCTION, FUN_ENCRYPT);
+    // error = ioctl(fd, CONFIG_CRYPT_FUNCTION, FUN_ENCRYPT);
     // check error
-    error = ioctl(fd, CONFIG_CRYPT_ALGORITHM, ALG_CAESAR_TEST);
+    // error = ioctl(fd, CONFIG_CRYPT_ALGORITHM, ALG_CAESAR_TEST);
     // check error
-    struct caesar_test_settings settings;
-    settings.rot = 13;
-    error = ioctl(fd, CONFIG_ALGORITHM_SETTINGS, &settings);
+    // struct caesar_test_settings settings;
+    // settings.rot = 13;
+    // error = ioctl(fd, CONFIG_ALGORITHM_SETTINGS, &settings);
     // check error
 
 
     char plaintext_buf[] = "My character buffer";
     size_t bytes_written = write(fd, plaintext_buf, sizeof(plaintext_buf));
     // check bytes_written
+    printf("PLAINTEXT: [%s]\n", plaintext_buf);
 
 
     char ciphertext_buf[MAX_BUFFER_LEN];
     memset(ciphertext_buf, 0, sizeof(ciphertext_buf));
     size_t bytes_read = read(fd, ciphertext_buf, bytes_written);
     // check bytes read
+    printf("CIPHER: [%s]\n", ciphertext_buf);
 
 
     close(fd);
