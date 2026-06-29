@@ -1,3 +1,4 @@
+#include "sys/errno.h"
 #include <sys/param.h>
 #include <sys/module.h>
 #include <sys/kernel.h>
@@ -34,7 +35,7 @@ static struct cdevsw cccdev_cdevsw = {
 
 
 static int d_open(struct cdev *dev, int oflags, int devtype, struct thread *td) {
-    // struct session *session = create_new_session();
+    (void)create_new_session();
     return (0);
 }
 
@@ -65,7 +66,11 @@ static int d_write(struct cdev *dev, struct uio *uio, int ioflag) {
 }
 
 static int d_ioctl(struct cdev *dev, u_long cmd, caddr_t data, int fflag, struct thread *td) {
-    // int error;
+    int error = 0;
+
+    struct session *session = get_session();
+    if (session == NULL)
+        return (EIO);
 
     switch (cmd) {
     /*
@@ -78,9 +83,49 @@ static int d_ioctl(struct cdev *dev, u_long cmd, caddr_t data, int fflag, struct
      *
      *   break;
      */
+    case CCCDEV_IOCTL_RESET:
+        session->settings = (struct settings){0};
+        break;
+    case CCCDEV_IOCTL_SET_FUNC:
+        session->settings.function = *(enum crypt_function *)data;
+        /* FUNC_UNDEFINED is still a valid value */
+        if (
+            session->settings.function <  FUNC_UNDEFINED ||
+            session->settings.function >= FUNC_ENUM_END
+        ) {
+            error = ENOTTY;
+            session->settings.function = FUNC_UNDEFINED;
+        }
+        break;
+    case CCCDEV_IOCTL_SET_ALG:
+        session->settings.algorithm = *(enum crypt_algorithm *)data;
+        /* ALG_UNDEFINED is still a valid value */
+        if (
+            session->settings.algorithm <  ALG_UNDEFINED ||
+            session->settings.algorithm >= ALG_ENUM_END
+        ) {
+            error = ENOTTY;
+            session->settings.function = ALG_UNDEFINED;
+        }
+        break;
+    case CCCDEV_IOCTL_SET_SETTINGS:
+        session->settings.settings = *(union algorithm_settings *)data;
+        break;
+    case CCCDEV_IOCTL_GET_FUNC:
+        *(enum crypt_function *)data = session->settings.function;
+        break;
+    case CCCDEV_IOCTL_GET_ALG:
+        *(enum crypt_algorithm *)data = session->settings.algorithm;
+        break;
+    case CCCDEV_IOCTL_GET_SETTINGS:
+        *(union algorithm_settings *)data = session->settings.settings;
+        break;
+    default:
+        error = ENOTTY;
+        break;
     }
 
-    return (0);
+    return (error);
 }
 
 

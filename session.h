@@ -13,10 +13,10 @@
 /* INT TYPE DEFS */
 #include <sys/systm.h>
 
-#include <sys/atomic.h>
+#include <machine/atomic.h>
 
 
-#include "settings.h"
+#include "cccdev_settings.h"
 
 
 

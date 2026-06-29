@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "settings.h"
+#include "cccdev_settings.h"
 
 
 
