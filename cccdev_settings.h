@@ -1,5 +1,9 @@
+#ifndef CCCDEV_SETTINGS
+#define CCCDEV_SETTINGS
+
+#include <sys/ioccom.h>
+
 #include "alg_settings.h"
-#include "cccdev_settings_ioctl.h"
 
 
 enum crypt_function {
@@ -93,18 +97,12 @@ static int alg_func_agree(enum crypt_algorithm alg, enum crypt_function func) {
 }
 
 
-#include <sys/iuoccom.h>
 
-#define CCCDEV_IOCTL_GROUP Q
-
+#define CCCDEV_IOCTL_GROUP 'Q'
 
 
-#define CCCDEV_IOCTL_RESET          _IO(CCCDEV_IOCTL_GROUP, 1)
 
-#define CCCDEV_IOCTL_SET_FUNC       _IOW(CCCDEV_IOCTL_GROUP, 2, enum crypt_function)
-#define CCCDEV_IOCTL_SET_ALG        _IOW(CCCDEV_IOCTL_GROUP, 3, enum crypt_algorithm)
-#define CCCDEV_IOCTL_SET_SETTINGS   _IOW(CCCDEV_IOCTL_GROUP, 4, union crypt_algorithm)
+#define CCCDEV_IOCTL_RESET_SETTINGS _IO(CCCDEV_IOCTL_GROUP, 1)
+#define CCCDEV_IOCTL_SET_SETTINGS   _IOW(CCCDEV_IOCTL_GROUP, 4, struct settings)
 
-#define CCCDEV_IOCTL_GET_FUNC       _IOR(CCCDEV_IOCTL_GROUP, 5, enum crypt_function)
-#define CCCDEV_IOCTL_GET_ALG        _IOR(CCCDEV_IOCTL_GROUP, 6, enum crypt_algorithm)
-#define CCCDEV_IOCTL_GET_SETTINGS   _IOR(CCCDEV_IOCTL_GROUP, 7, union crypt_algorithm)
+#endif /* CCCDEV_SETTINGS */

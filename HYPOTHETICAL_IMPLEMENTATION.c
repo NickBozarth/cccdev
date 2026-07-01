@@ -18,14 +18,13 @@ int main() {
     int fd = open("/dev/cccdev", O_RDWR);
     // if (fd == 0) { error }
 
-    // error = ioctl(fd, CONFIG_CRYPT_FUNCTION, FUN_ENCRYPT);
-    // check error
-    // error = ioctl(fd, CONFIG_CRYPT_ALGORITHM, ALG_CAESAR_TEST);
-    // check error
-    // struct caesar_test_settings settings;
-    // settings.rot = 13;
-    // error = ioctl(fd, CONFIG_ALGORITHM_SETTINGS, &settings);
-    // check error
+    struct settings settings = {
+        .function   = FUNC_ENCRYPT,
+        .algorithm  = ALG_CAESAR_TEST,
+        .settings   = { .caesar = {.rot = 13 } }
+    };
+    ioctl(fd, CCCDEV_IOCTL_SET_SETTINGS, &settings);
+
 
 
     char plaintext_buf[] = "My character buffer";

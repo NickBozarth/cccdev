@@ -1,6 +1,9 @@
-/* LIST INCLUDES */
+#ifndef SESSION
+#define SESSION
+
+/* LIST */
 #include <sys/queue.h>
-/* MUTEX INCLUDES */
+/* MUTEX */
 #include <sys/param.h>
 #include <sys/lock.h>
 #include <sys/mutex.h>
@@ -12,7 +15,7 @@
 #include <sys/uio.h>
 /* INT TYPE DEFS */
 #include <sys/systm.h>
-
+/* ATOMIC_FETCHADD_XX */
 #include <machine/atomic.h>
 
 
@@ -168,3 +171,5 @@ static int session_to_uio(struct session *session, struct uio *uio) {
 
     return (error);
 }
+
+#endif /* SESSION */
